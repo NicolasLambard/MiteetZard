@@ -1,0 +1,272 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Gestion des Menus</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="openNewMenuModal()">
+        <ion-icon name="add-circle-outline" slot="start"></ion-icon>
+        Nouveau Menu
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <div class="page-title">
+    <h1>Gestion des Menus</h1>
+    <p>Créez et gérez des menus composés de plusieurs produits</p>
+  </div>
+
+  <div class="loading-container" *ngIf="loading">
+    <ion-spinner name="crescent"></ion-spinner>
+    <p>Chargement des menus...</p>
+  </div>
+
+  <ion-list *ngIf="!loading && menus.length > 0">
+    <ion-item-sliding *ngFor="let menu of menus">
+      <ion-item>
+        <ion-thumbnail slot="start" *ngIf="menu.image_data">
+          <img [src]="menu.image_data" alt="{{ menu.nom_menu }}">
+        </ion-thumbnail>
+        <ion-thumbnail slot="start" *ngIf="!menu.image_data">
+          <div class="no-image">
+            <ion-icon name="image-outline"></ion-icon>
+          </div>
+        </ion-thumbnail>
+        <ion-label>
+          <h2>{{ menu.nom_menu }}</h2>
+          <p>{{ menu.description }}</p>
+          <p><strong>Prix:</strong> {{ menu.prix | currency:'EUR':'symbol':'1.2-2' }}</p>
+          <p>
+            <strong>Produits inclus:</strong> 
+            <span *ngFor="let prod of menu.produits; let last = last">
+              {{ prod.nom_produit }}{{ !last ? ', ' : '' }}
+            </span>
+          </p>
+        </ion-label>
+        <ion-badge slot="end" [color]="menu.actif ? 'success' : 'medium'">
+          {{ menu.actif ? 'Actif' : 'Inactif' }}
+        </ion-badge>
+      </ion-item>
+      <ion-item-options side="end">
+        <ion-item-option color="primary" (click)="editMenu(menu)">
+          <ion-icon slot="icon-only" name="create-outline"></ion-icon>
+        </ion-item-option>
+        <ion-item-option [color]="menu.actif ? 'medium' : 'success'" (click)="toggleMenuStatus(menu)">
+          <ion-icon slot="icon-only" [name]="menu.actif ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
+        </ion-item-option>
+        <ion-item-option color="danger" (click)="confirmDeleteMenu(menu)">
+          <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+        </ion-item-option>
+      </ion-item-options>
+    </ion-item-sliding>
+  </ion-list>
+
+  <div class="empty-state" *ngIf="!loading && menus.length === 0">
+    <ion-icon name="fast-food-outline" size="large"></ion-icon>
+    <h2>Aucun menu disponible</h2>
+    <p>Cliquez sur "Nouveau Menu" pour créer votre premier menu composé.</p>
+    <ion-button expand="block" (click)="openNewMenuModal()">
+      <ion-icon name="add-circle-outline" slot="start"></ion-icon>
+      Créer un menu
+    </ion-button>
+  </div>
+</ion-content>
+
+<ion-modal [isOpen]="showMenuModal">
+  <ng-template>
+    <ion-header>
+      <ion-toolbar color="primary">
+        <ion-title>{{ editMode ? 'Modifier' : 'Nouveau' }} Menu</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="closeMenuModal()">
+            <ion-icon name="close-outline"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content class="ion-padding">
+      <form [formGroup]="menuForm" (ngSubmit)="saveMenu()">
+        <ion-item>
+          <ion-label position="floating">Nom du menu *</ion-label>
+          <ion-input formControlName="nom_menu" type="text" required></ion-input>
+        </ion-item>
+        <div class="validation-error" *ngIf="menuForm.get('nom_menu')?.invalid && menuForm.get('nom_menu')?.touched">
+          Le nom du menu est obligatoire
+        </div>
+
+        <ion-item>
+          <ion-label position="floating">Description</ion-label>
+          <ion-textarea formControlName="description" rows="3"></ion-textarea>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="floating">Prix (€) *</ion-label>
+          <ion-input formControlName="prix" type="number" step="0.01" required></ion-input>
+        </ion-item>
+        <div class="validation-error" *ngIf="menuForm.get('prix')?.invalid && menuForm.get('prix')?.touched">
+          Le prix est obligatoire et doit être supérieur à 0
+        </div>
+
+        <ion-item>
+          <ion-label>Actif</ion-label>
+          <ion-toggle formControlName="actif"></ion-toggle>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="stacked">Image du menu</ion-label>
+          <div class="image-upload-container">
+            <div class="image-preview" *ngIf="imagePreview">
+              <img [src]="imagePreview" alt="Aperçu de l'image">
+              <ion-button size="small" fill="clear" (click)="clearImage()">
+                <ion-icon name="close-circle"></ion-icon>
+              </ion-button>
+            </div>
+            <ion-button expand="block" (click)="imageInput.click()" *ngIf="!imagePreview">
+              <ion-icon name="image-outline" slot="start"></ion-icon>
+              Sélectionner une image
+            </ion-button>
+            <input type="file" #imageInput (change)="onImageSelected($event)" style="display: none" accept="image/*">
+          </div>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="stacked">Produits inclus dans le menu *</ion-label>
+          <ion-select formControlName="produits" multiple="true" [compareWith]="compareWith">
+            <ion-select-option *ngFor="let produit of availableProducts" [value]="produit.id_produit">
+              {{ produit.nom_produit }} ({{ produit.prix | currency:'EUR':'symbol':'1.2-2' }})
+            </ion-select-option>
+          </ion-select>
+        </ion-item>
+        <div class="validation-error" *ngIf="menuForm.get('produits')?.invalid && menuForm.get('produits')?.touched">
+          Vous devez sélectionner au moins un produit
+        </div>
+
+        <div class="selected-products" *ngIf="menuForm.get('produits')?.value?.length > 0">
+          <h4>Produits sélectionnés:</h4>
+          <ion-list>
+            <ion-item *ngFor="let produitId of menuForm.get('produits')?.value">
+              <ion-label>
+                {{ getProductName(produitId) }}
+              </ion-label>
+              <ion-note slot="end">
+                {{ getProductPrice(produitId) | currency:'EUR':'symbol':'1.2-2' }}
+              </ion-note>
+            </ion-item>
+          </ion-list>
+          <div class="total-price">
+            <strong>Prix total des produits:</strong> {{ calculateTotalPrice() | currency:'EUR':'symbol':'1.2-2' }}
+          </div>
+          <div class="savings">
+            <strong>Économie:</strong> {{ calculateSavings() | currency:'EUR':'symbol':'1.2-2' }}
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <ion-button expand="block" type="submit" [disabled]="menuForm.invalid || saving">
+            <ion-icon name="save-outline" slot="start"></ion-icon>
+            {{ saving ? 'Enregistrement...' : 'Enregistrer' }}
+          </ion-button>
+          <ion-button expand="block" fill="outline" (click)="closeMenuModal()">
+            <ion-icon name="close-outline" slot="start"></ion-icon>
+            Annuler
+          </ion-button>
+        </div>
+      </form>
+    </ion-content>
+  </ng-template>
+</ion-modal>
+
+<style>
+  .page-title {
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--ion-color-light);
+  }
+  
+  .loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 200px;
+  }
+  
+  .empty-state {
+    text-align: center;
+    padding: 40px 20px;
+  }
+  
+  .empty-state ion-icon {
+    font-size: 64px;
+    color: var(--ion-color-medium);
+  }
+  
+  .validation-error {
+    color: var(--ion-color-danger);
+    padding-left: 16px;
+    font-size: 12px;
+    margin-bottom: 16px;
+  }
+  
+  .image-upload-container {
+    margin: 16px 0;
+  }
+  
+  .image-preview {
+    position: relative;
+    width: 100%;
+    max-width: 300px;
+    margin: 0 auto;
+  }
+  
+  .image-preview img {
+    width: 100%;
+    border-radius: 8px;
+  }
+  
+  .image-preview ion-button {
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+  
+  .no-image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    background-color: var(--ion-color-light);
+    border-radius: 4px;
+  }
+  
+  .no-image ion-icon {
+    font-size: 24px;
+    color: var(--ion-color-medium);
+  }
+  
+  .selected-products {
+    margin-top: 20px;
+    border: 1px solid var(--ion-color-light);
+    border-radius: 8px;
+    padding: 10px;
+  }
+  
+  .total-price, .savings {
+    margin-top: 10px;
+    padding: 10px;
+    background-color: var(--ion-color-light);
+    border-radius: 4px;
+  }
+  
+  .savings {
+    color: var(--ion-color-success);
+  }
+  
+  .form-actions {
+    margin-top: 20px;
+  }
+</style> 

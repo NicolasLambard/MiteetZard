@@ -1,0 +1,114 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/accueil" text="Retour"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Profil</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="profile-container">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">Profil</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <div *ngIf="isLoggedIn">
+    <ion-card class="profile-card">
+      <ion-card-header>
+        <ion-card-title>{{ firstName }} {{ lastName }}</ion-card-title>
+      </ion-card-header>
+      
+      <ion-card-content>
+        <div *ngIf="isEditing">
+          <ion-list lines="full">
+            <ion-item>
+              <ion-label position="stacked">Prénom</ion-label>
+              <ion-input [(ngModel)]="firstName" placeholder="Prénom"></ion-input>
+            </ion-item>
+            
+            <ion-item>
+              <ion-label position="stacked">Nom</ion-label>
+              <ion-input [(ngModel)]="lastName" placeholder="Nom"></ion-input>
+            </ion-item>
+            
+            <ion-item>
+              <ion-label position="stacked">Email</ion-label>
+              <ion-input [(ngModel)]="newEmail" placeholder="Email" type="email"></ion-input>
+            </ion-item>
+            
+            <ion-item>
+              <ion-label position="stacked">Téléphone</ion-label>
+              <ion-input [(ngModel)]="userPhone" placeholder="Téléphone" type="tel"></ion-input>
+            </ion-item>
+            
+            <ion-item>
+              <ion-label position="stacked">Adresse</ion-label>
+              <ion-textarea [(ngModel)]="address" placeholder="Adresse" rows="2"></ion-textarea>
+            </ion-item>
+          </ion-list>
+          
+          <div class="button-container">
+            <ion-button expand="block" (click)="saveProfile()" color="success">
+              Enregistrer
+            </ion-button>
+            <ion-button expand="block" (click)="toggleEditMode()" color="medium" fill="outline">
+              Annuler
+            </ion-button>
+          </div>
+        </div>
+        
+        <div *ngIf="!isEditing">
+          <ion-list lines="full">
+            <ion-item>
+              <ion-label>
+                <h3>Email</h3>
+                <p>{{ userEmail }}</p>
+              </ion-label>
+            </ion-item>
+            
+            <ion-item>
+              <ion-label>
+                <h3>Téléphone</h3>
+                <p>{{ userPhone }}</p>
+              </ion-label>
+            </ion-item>
+            
+            <ion-item>
+              <ion-label>
+                <h3>Adresse</h3>
+                <p>{{ address }}</p>
+              </ion-label>
+            </ion-item>
+          </ion-list>
+          
+          <div class="button-container">
+            <ion-button expand="block" (click)="toggleEditMode()" color="primary">
+              Modifier le profil
+            </ion-button>
+            <ion-button expand="block" (click)="navigateToOrders()" color="tertiary">
+              <ion-icon name="receipt-outline" slot="start"></ion-icon>
+              Voir mes commandes
+            </ion-button>
+            <ion-button expand="block" (click)="deconnexion()" color="danger" fill="outline">
+              Se déconnecter
+            </ion-button>
+          </div>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </div>
+
+  <ion-card *ngIf="!isLoggedIn" class="profile-card">
+    <ion-card-header>
+      <ion-card-title>Non connecté</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <p>Veuillez vous connecter pour voir votre profil.</p>
+      <ion-button expand="block" color="primary" [routerLink]="['/login']">
+        Se connecter
+      </ion-button>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

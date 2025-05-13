@@ -1,0 +1,108 @@
+/*
+ * App Global CSS
+ * ----------------------------------------------------------------------------
+ * Put style rules here that you want to apply globally. These styles are for
+ * the entire app and not just one component. Additionally, this file can be
+ * used as an entry point to import other CSS/Sass files to be included in the
+ * output CSS.
+ * For more information on global stylesheets, visit the documentation:
+ * https://ionicframework.com/docs/layout/global-stylesheets
+ */
+
+@import "@ionic/angular/css/core.css";
+
+@import "@ionic/angular/css/normalize.css";
+@import "@ionic/angular/css/structure.css";
+@import "@ionic/angular/css/typography.css";
+@import "@ionic/angular/css/display.css";
+
+@import "@ionic/angular/css/padding.css";
+@import "@ionic/angular/css/float-elements.css";
+@import "@ionic/angular/css/text-alignment.css";
+@import "@ionic/angular/css/text-transformation.css";
+@import "@ionic/angular/css/flex-utils.css";
+@import "@ionic/angular/css/palettes/dark.system.css";
+
+@import "./app/mobile-fix.scss";
+
+@media (max-width: 576px) {
+  ion-card, .card-container {
+    margin: 10px 5px !important;
+    width: calc(100% - 10px) !important;
+  }
+  
+  h1, h2, h3, .card-title {
+    font-size: 1.5rem !important;
+    text-align: center !important;
+  }
+  
+  ion-button, button {
+    width: 100% !important;
+    margin: 5px 0 !important;
+    --padding-start: 10px !important;
+    --padding-end: 10px !important;
+  }
+  
+  .notification-badge {
+    padding: 5px 10px !important;
+    border-radius: 15px !important;
+    font-size: 0.9rem !important;
+    font-weight: bold !important;
+  }
+  
+  p, ion-label, ion-text {
+    font-size: 1rem !important;
+    line-height: 1.4 !important;
+  }
+  
+  ion-icon {
+    font-size: 24px !important;
+  }
+  
+  .admin-panel, .orders-panel {
+    padding: 15px !important;
+    margin-bottom: 20px !important;
+  }
+  
+  ion-content {
+    --padding-start: 5px;
+    --padding-end: 5px;
+  }
+  
+  .content-container, ion-app, body, html {
+    .card-container {
+      padding: 8px;
+    }
+    
+    ion-badge {
+      min-width: 22px;
+      padding: 6px 10px;
+      border-radius: 12px;
+      font-weight: bold;
+    }
+    
+    ion-card {
+      margin: 10px 5px;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    
+    ion-button {
+      --border-radius: 8px;
+      font-weight: 500;
+    }
+  }
+  
+  .item-inner {
+    padding-right: 0 !important;
+  }
+  
+  ion-card {
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1) !important;
+  }
+  
+  ion-button {
+    height: 44px !important;
+    font-size: 14px !important;
+  }
+}

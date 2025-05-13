@@ -1,0 +1,51 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Se connecter</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="page-background"></div>
+
+  <div class="login-container">
+    <div class="logo-container">
+      <img src="assets/logo.jpg" alt="Logo Mite & Zard" />
+      <h2>Mite & Zard</h2>
+    </div>
+
+    <form (ngSubmit)="seConnecter()" #loginForm="ngForm" class="form-container">
+      <ion-item>
+        <ion-label position="floating">Email</ion-label>
+        <ion-input
+          type="email"
+          [(ngModel)]="utilisateur.email"
+          name="email"
+          required
+        ></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating">Mot de passe</ion-label>
+        <ion-input
+          type="password"
+          [(ngModel)]="utilisateur.motDePasse"
+          name="motDePasse"
+          required
+        ></ion-input>
+      </ion-item>
+
+      <div *ngIf="loginError" class="error-message">
+        <ion-text color="danger">{{ loginError }}</ion-text>
+      </div>
+
+      <ion-button expand="block" type="submit" [disabled]="!loginForm.valid">
+        SE CONNECTER
+      </ion-button>
+    </form>
+
+    <div class="text-container">
+      <p>Pas encore de compte ?</p>
+      <ion-button fill="clear" (click)="naviguerVersInscription()">Créer un compte</ion-button>
+    </div>
+  </div>
+</ion-content>

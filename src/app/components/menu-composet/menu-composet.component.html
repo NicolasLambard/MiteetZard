@@ -1,0 +1,198 @@
+<div class="menus-container">
+  <!-- Afficher le titre seulement s'il y a des menus -->
+  <div class="section-title" *ngIf="!loading && menus && menus.length > 0">
+    <h2>Nos Menus Composés</h2>
+    <p>Découvrez nos formules de menus à prix avantageux, incluant plusieurs produits</p>
+  </div>
+
+  <div *ngIf="loading" class="loading-container">
+    <ion-spinner name="crescent"></ion-spinner>
+    <p>Chargement des menus composés...</p>
+  </div>
+
+  <!-- Message si aucun menu n'est disponible mais aucun autre produit n'existe -->
+  <ion-card *ngIf="!loading && (!menus || menus.length === 0) && shouldShowEmptyState" class="empty-state-card">
+    <ion-card-content class="no-menu-content">
+      <ion-icon name="restaurant-outline" size="large"></ion-icon>
+      <h2>Pas de menus composés disponibles</h2>
+      <p>Vous pouvez commander des produits individuels en attendant.</p>
+      <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+        <ion-fab-button color="primary" (click)="openCart()">
+          <ion-icon name="cart-outline"></ion-icon>
+        </ion-fab-button>
+      </ion-fab>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Affichage des menus -->
+  <ion-grid *ngIf="!loading && menus && menus.length > 0">
+    <ion-row>
+      <ion-col size="12" size-md="6" size-lg="4" *ngFor="let menu of menus">
+        <ion-card>
+          <div class="menu-image-container">
+            <img *ngIf="menu.image_data" [src]="menu.image_data" alt="{{ menu.nom_menu }}" class="menu-image" />
+            <img *ngIf="!menu.image_data" src="assets/images/menu-default.jpg" alt="Image par défaut" class="menu-image" />
+            <div class="menu-discount" *ngIf="calculateDiscount(menu) > 0">
+              -{{ calculateDiscount(menu) }}%
+            </div>
+          </div>
+          
+          <ion-card-header>
+            <ion-card-title>{{ menu.nom_menu }}</ion-card-title>
+            <ion-card-subtitle>
+              <div class="price-container">
+                <span class="current-price">{{ menu.prix | currency:'EUR':'symbol':'1.2-2':'fr' }}</span>
+                <span class="original-price" *ngIf="calculateDiscount(menu) > 0">
+                  {{ calculateOriginalPrice(menu) | currency:'EUR':'symbol':'1.2-2':'fr' }}
+                </span>
+              </div>
+            </ion-card-subtitle>
+          </ion-card-header>
+          
+          <ion-card-content>
+            <p class="menu-description">{{ menu.description }}</p>
+            
+            <ion-list lines="none" class="menu-products-list">
+              <ion-item *ngFor="let produit of menu.produits">
+                <ion-icon name="checkmark-circle-outline" slot="start"></ion-icon>
+                <ion-label>{{ produit.nom_produit }}</ion-label>
+                <span slot="end">{{ produit.prix | currency:'EUR':'symbol':'1.2-2':'fr' }}</span>
+              </ion-item>
+            </ion-list>
+            
+            <ion-button expand="block" (click)="addToCart(menu)" color="success" class="add-to-cart-btn">
+              <ion-icon name="cart-outline" slot="start"></ion-icon>
+              Ajouter au panier
+            </ion-button>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</div>
+
+<style>
+  .menus-container {
+    padding: 20px;
+  }
+  
+  .section-title {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+  
+  .section-title h2 {
+    font-size: 2rem;
+    color: var(--ion-color-primary);
+    margin-bottom: 10px;
+  }
+  
+  .section-title p {
+    font-size: 1.1rem;
+    color: var(--ion-color-medium);
+  }
+  
+  .loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 200px;
+  }
+  
+  .empty-state-card {
+    text-align: center;
+    background-color: #1e1e1e;
+    border-radius: 8px;
+    margin: 10px 0;
+    position: relative;
+    min-height: 200px;
+  }
+  
+  .no-menu-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+  }
+  
+  .empty-state-card ion-icon {
+    font-size: 64px;
+    color: #aaa;
+    margin-bottom: 15px;
+  }
+  
+  .empty-state-card h2 {
+    font-size: 1.5rem;
+    color: white;
+    margin-bottom: 10px;
+  }
+  
+  .empty-state-card p {
+    color: #bbb;
+    font-size: 1rem;
+  }
+  
+  .empty-state-card ion-fab {
+    margin: 0;
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+  }
+  
+  .menu-image-container {
+    position: relative;
+    height: 180px;
+    width: 100%;
+    overflow: hidden;
+  }
+  
+  .menu-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .menu-discount {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: var(--ion-color-success);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    font-weight: bold;
+  }
+  
+  .price-container {
+    display: flex;
+    align-items: center;
+  }
+  
+  .current-price {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--ion-color-primary);
+  }
+  
+  .original-price {
+    margin-left: 10px;
+    font-size: 1rem;
+    text-decoration: line-through;
+    color: var(--ion-color-medium);
+  }
+  
+  .menu-description {
+    margin-bottom: 20px;
+  }
+  
+  .menu-products-list {
+    padding-left: 20px;
+  }
+  
+  .add-to-cart-btn {
+    margin-top: auto;
+  }
+</style> 

@@ -1,0 +1,97 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/admin"></ion-back-button>
+    </ion-buttons>
+    <ion-title>
+      <ion-icon name="fast-food-outline"></ion-icon> Gestion des Produits
+    </ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="fixAdminRights()">
+        <ion-icon name="key-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="ion-padding">
+    <ion-card *ngIf="accessDenied" color="danger">
+      <ion-card-header>
+        <ion-card-title>Accès refusé</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <p>Vous n'avez pas les droits administrateur requis pour accéder à cette page.</p>
+        <ion-button expand="block" (click)="fixAdminRights()">
+          <ion-icon name="key-outline" slot="start"></ion-icon>
+          Réparer les droits d'accès
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-card *ngIf="!accessDenied">
+      <ion-card-header>
+        <ion-card-title>Liste des produits au menu</ion-card-title>
+        <ion-card-subtitle>Activer ou désactiver les produits</ion-card-subtitle>
+      </ion-card-header>
+      
+      <ion-card-content>
+        <ion-button expand="block" color="success" (click)="showAddProductModal()">
+          <ion-icon name="add-circle-outline" slot="start"></ion-icon>
+          Ajouter un nouveau produit
+        </ion-button>
+
+        <ion-list *ngIf="!loading; else loadingTemplate">
+          <ion-item-sliding *ngFor="let produit of produits">
+            <ion-item>
+              <ion-thumbnail slot="start" class="product-thumbnail">
+                <ng-container *ngIf="produit.image_data; else noImage">
+                  <img [src]="produit.image_data" alt="{{ produit.nom_produit }}">
+                </ng-container>
+                <ng-template #noImage>
+                  <div class="no-image-placeholder">
+                    <ion-icon name="restaurant-outline" size="large"></ion-icon>
+                  </div>
+                </ng-template>
+              </ion-thumbnail>
+              <ion-label>
+                <h2>{{ produit.nom_produit }}</h2>
+                <p>{{ produit.description }}</p>
+                <p><strong>Prix:</strong> {{ produit.prix | currency:'EUR' }}</p>
+                <p><strong>Catégorie:</strong> {{ produit.nom_categorie || 'Non catégorisé' }}</p>
+              </ion-label>
+              <ion-toggle
+                [checked]="produit.actif === 1"
+                (ionChange)="toggleProductStatus(produit)"
+                slot="end">
+              </ion-toggle>
+            </ion-item>
+            
+            <ion-item-options side="end">
+              <ion-item-option color="primary" (click)="editProduct(produit)">
+                <ion-icon slot="icon-only" name="create-outline"></ion-icon>
+              </ion-item-option>
+              <ion-item-option color="danger" (click)="confirmDelete(produit)">
+                <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+              </ion-item-option>
+            </ion-item-options>
+          </ion-item-sliding>
+          
+          <ion-item *ngIf="produits.length === 0">
+            <ion-label>
+              Aucun produit disponible. Ajoutez votre premier produit !
+            </ion-label>
+          </ion-item>
+        </ion-list>
+      </ion-card-content>
+    </ion-card>
+  </div>
+
+  <ng-template #loadingTemplate>
+    <div class="loading-container">
+      <ion-spinner name="crescent"></ion-spinner>
+      <p>Chargement des produits...</p>
+    </div>
+  </ng-template>
+</ion-content>
+

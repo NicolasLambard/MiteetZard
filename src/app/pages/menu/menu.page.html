@@ -1,0 +1,106 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/accueil" text="Retour"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Menu</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="goBack()">
+        <ion-icon slot="icon-only" name="home-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div *ngIf="loading" class="loading-container">
+    <ion-spinner name="crescent"></ion-spinner>
+    <p>Chargement du menu...</p>
+  </div>
+
+  <ion-card *ngIf="error" color="danger">
+    <ion-card-content>
+      {{ error }}
+      <ion-button expand="block" (click)="loadMenu()">Réessayer</ion-button>
+    </ion-card-content>
+  </ion-card>
+
+  <div *ngIf="!loading && !error">
+    <div *ngFor="let category of categories" class="category-section">
+      <h2>{{ category }}</h2>
+      
+      <ion-grid>
+        <ion-row>
+          <ion-col size="12" size-md="6" *ngFor="let item of menuItems[category]">
+            <ion-card>
+              <div class="card-content">
+                <div *ngIf="item.image_data" class="product-image">
+                  <img [src]="item.image_data" [alt]="item.nom_produit">
+                </div>
+                
+                <div class="product-info">
+                  <h3>{{ item.nom_produit }}</h3>
+                  <p *ngIf="item.description">{{ item.description }}</p>
+                  <p class="price">{{ formatPrice(item.prix) }}</p>
+                  
+                  <ion-button expand="block" (click)="addToCart(item)">
+                    <ion-icon name="cart-outline" slot="start"></ion-icon>
+                    Ajouter au panier
+                  </ion-button>
+                </div>
+              </div>
+            </ion-card>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </div>
+  </div>
+  
+  <div *ngIf="!loading && !error && categories.length === 0">
+    <div class="empty-menu-message">
+      <ion-icon name="restaurant-outline" size="large"></ion-icon>
+      <h2>Aucun produit disponible</h2>
+      <p>Notre menu est en cours de mise à jour.</p>
+    </div>
+  </div>
+  
+  <div class="section-divider" *ngIf="categories.length > 0"></div>
+  <app-menu-composet [shouldShowEmptyState]="false"></app-menu-composet>
+</ion-content>
+
+<style>
+  .section-divider {
+    height: 2px;
+    background-color: var(--ion-color-light);
+    margin: 30px 0;
+  }
+  
+  .product-info ion-button {
+    margin-top: 10px;
+  }
+  
+  .empty-menu-message {
+    text-align: center;
+    padding: 40px 20px;
+    background-color: #1e1e1e;
+    border-radius: 8px;
+    margin: 20px 0;
+  }
+  
+  .empty-menu-message ion-icon {
+    font-size: 64px;
+    color: #aaa;
+    margin-bottom: 15px;
+  }
+  
+  .empty-menu-message h2 {
+    font-size: 1.5rem;
+    color: white;
+    margin-bottom: 10px;
+  }
+  
+  .empty-menu-message p {
+    color: #bbb;
+    font-size: 1rem;
+  }
+</style>

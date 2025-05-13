@@ -1,0 +1,30 @@
+.users-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+.spinner-center {
+  display: block;
+  margin: 20px auto;
+}
+
+.current-user {
+  --background: rgba(var(--ion-color-primary-rgb), 0.05);
+}
+
+.avatar-icon {
+  font-size: 40px;
+  margin: 4px;
+}
+
+.usage-guide {
+  margin-top: 16px;
+  padding: 10px;
+  border-top: 1px solid #eee;
+  
+  p {
+    margin-bottom: 8px;
+    font-size: 0.9em;
+  }
+} 

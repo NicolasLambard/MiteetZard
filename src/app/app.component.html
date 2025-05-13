@@ -1,0 +1,10 @@
+<ion-app>
+  <ion-router-outlet></ion-router-outlet>
+  
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed" *ngIf="showCartButton">
+    <ion-fab-button (click)="goToCart()">
+      <ion-icon name="cart-outline"></ion-icon>
+      <ion-badge *ngIf="cartItemCount > 0" color="danger">{{ cartItemCount }}</ion-badge>
+    </ion-fab-button>
+  </ion-fab>
+</ion-app>

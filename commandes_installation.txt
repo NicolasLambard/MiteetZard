@@ -1,0 +1,32 @@
+# Commandes utilisées pour installer et corriger les dépendances
+
+# 1. Installation initiale des packages
+npm install
+
+# 2. Correction des vulnérabilités (tentative simple)
+npm audit fix
+
+# 3. Correction des vulnérabilités avec --force
+npm audit fix --force
+
+# 4. Mise à jour manuelle des packages problématiques
+npm update follow-redirects axios http-proxy-middleware @babel/runtime esbuild
+
+# 5. Désinstallation et réinstallation de localtunnel (qui avait des dépendances vulnérables)
+npm uninstall localtunnel
+npm install localtunnel@latest
+
+# 6. Installation directe des dernières versions des packages problématiques
+npm install axios@latest follow-redirects@latest http-proxy-middleware@latest @babel/runtime@latest esbuild@latest
+
+# 7. Mise à jour en ignorant les problèmes de dépendances peer
+npm update --legacy-peer-deps
+
+# 8. Suppression complète de localtunnel (qui causait la plupart des vulnérabilités)
+npm uninstall localtunnel --save
+
+# Résultat : 0 vulnérabilités trouvées
+# npm audit -> "found 0 vulnerabilities"
+
+# Pour installer ce projet sur une nouvelle machine, simplement exécuter :
+npm install 

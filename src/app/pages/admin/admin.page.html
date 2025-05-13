@@ -1,0 +1,155 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>
+      <ion-icon name="shield-checkmark-outline"></ion-icon> Panel Administrateur
+    </ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="backToHome()">
+        <ion-icon name="home-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="admin-container">
+    <ion-card class="admin-intro">
+      <ion-card-header>
+        <ion-card-title>Bienvenue dans le panel d'administration</ion-card-title>
+        <ion-card-subtitle>Gérez votre restaurant Mite & Zard</ion-card-subtitle>
+      </ion-card-header>
+      <ion-card-content>
+        <p>Utilisez les modules ci-dessous pour administrer votre site et vos produits.</p>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-card class="admin-roles">
+      <ion-card-header>
+        <ion-card-title>
+          <ion-icon name="shield-outline" color="primary"></ion-icon>
+          Statut des Rôles Système
+        </ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-spinner *ngIf="loading" name="crescent"></ion-spinner>
+        
+        <ion-list *ngIf="!loading && !error">
+          <ion-item>
+            <ion-label>
+              <strong>Table des Rôles:</strong> 
+              <ion-text [color]="roleSummary.roleTableExists ? 'success' : 'danger'">
+                {{ roleSummary.roleTableExists ? 'Existante' : 'Manquante' }}
+              </ion-text>
+            </ion-label>
+          </ion-item>
+          <ion-item>
+            <ion-label>
+              <strong>Table des Rôles-Utilisateurs:</strong> 
+              <ion-text [color]="roleSummary.userRoleTableExists ? 'success' : 'danger'">
+                {{ roleSummary.userRoleTableExists ? 'Existante' : 'Manquante' }}
+              </ion-text>
+            </ion-label>
+          </ion-item>
+          <ion-item>
+            <ion-label>
+              <strong>Administrateur configuré:</strong> 
+              <ion-text [color]="roleSummary.adminExists ? 'success' : 'danger'">
+                {{ roleSummary.adminExists ? 'Oui' : 'Non' }}
+              </ion-text>
+            </ion-label>
+          </ion-item>
+        </ion-list>
+
+        <ion-text color="danger" *ngIf="error">
+          <p>{{ error }}</p>
+        </ion-text>
+
+        <div class="button-container">
+          <ion-button expand="block" (click)="checkRoleConfig()" [disabled]="loading">
+            <ion-icon name="refresh-outline" slot="start"></ion-icon>
+            Vérifier la configuration
+          </ion-button>
+          <ion-button expand="block" color="warning" (click)="initRoles()" [disabled]="loading">
+            <ion-icon name="construct-outline" slot="start"></ion-icon>
+            Initialiser les rôles
+          </ion-button>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-grid>
+      <ion-row>
+        <ion-col size="12" size-md="4">
+          <ion-card class="admin-module" (click)="gotoProductsManagement()">
+            <ion-card-header>
+              <ion-icon name="fast-food-outline" color="primary"></ion-icon>
+              <ion-card-title>Gestion des Produits</ion-card-title>
+            </ion-card-header>
+            <ion-card-content>
+              <p>Ajoutez, modifiez ou supprimez des produits du menu</p>
+              <p>Activez ou désactivez des produits</p>
+              <ion-button expand="block" color="primary">
+                <ion-icon name="arrow-forward-outline" slot="end"></ion-icon>
+                Gérer les produits
+              </ion-button>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+
+        <ion-col size="12" size-md="4">
+          <ion-card class="admin-module" (click)="gotoCategoriesManagement()">
+            <ion-card-header>
+              <ion-icon name="list-outline" color="primary"></ion-icon>
+              <ion-card-title>Gestion des Catégories</ion-card-title>
+            </ion-card-header>
+            <ion-card-content>
+              <p>Créez et organisez les catégories de produits</p>
+              <p>Réorganisez la structure de votre menu</p>
+              <ion-button expand="block" color="primary">
+                <ion-icon name="arrow-forward-outline" slot="end"></ion-icon>
+                Gérer les catégories
+              </ion-button>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+
+        <ion-col size="12" size-md="4">
+          <ion-card class="admin-module" (click)="gotoUsersManagement()">
+            <ion-card-header>
+              <ion-icon name="people-outline" color="primary"></ion-icon>
+              <ion-card-title>Gestion des Utilisateurs</ion-card-title>
+            </ion-card-header>
+            <ion-card-content>
+              <p>Gérez les utilisateurs et leurs rôles</p>
+              <p>Assignez des droits administrateurs ou gérants</p>
+              <ion-button expand="block" color="primary">
+                <ion-icon name="arrow-forward-outline" slot="end"></ion-icon>
+                Gérer les utilisateurs
+              </ion-button>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+
+      <ion-row>
+        <ion-col size="12" size-md="4">
+          <ion-card class="admin-module" (click)="gotoOrdersManagement()">
+            <ion-card-header>
+              <ion-icon name="receipt-outline" color="primary"></ion-icon>
+              <ion-card-title>Gestion des Commandes</ion-card-title>
+              <ion-badge color="danger" *ngIf="newOrdersCount > 0">{{ newOrdersCount }} nouvelle(s)</ion-badge>
+            </ion-card-header>
+            <ion-card-content>
+              <p>Suivez toutes les commandes en cours</p>
+              <p>Gérez les livraisons et les statuts</p>
+              <ion-button expand="block" color="primary">
+                <ion-icon name="arrow-forward-outline" slot="end"></ion-icon>
+                Gérer les commandes
+              </ion-button>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
+</ion-content> 

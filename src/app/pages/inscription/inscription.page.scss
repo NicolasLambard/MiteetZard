@@ -1,0 +1,119 @@
+.page-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background: url('/assets/camion.jpg') no-repeat center center;
+  background-size: cover;
+  z-index: -1;
+}
+
+ion-content {
+  --background: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.register-container {
+  position: relative;
+  width: 90%;
+  max-width: 500px;
+  margin: 20px auto;
+  background: rgba(0, 0, 0, 0.8); 
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  color: #fff;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.logo-container {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.logo-container img {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  margin-bottom: 10px;
+  border-radius: 10px;
+}
+
+.logo-container h2 {
+  font-size: 22px;
+  font-weight: bold;
+  margin: 0;
+  color: #fff;
+}
+
+.form-container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+ion-item {
+  --background: rgba(46, 46, 46, 0.8); 
+  --border-radius: 6px;
+  --border-width: 1px;
+  --border-color: #555;
+  margin-bottom: 5px;
+}
+
+ion-item:hover {
+  --border-color: #007bff;
+}
+
+ion-label {
+  color: #ddd;
+  font-size: 14px;
+}
+
+ion-input {
+  --color: #fff;
+  --placeholder-color: #aaa;
+}
+
+.button-container {
+  margin-top: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+ion-button {
+  font-size: 16px;
+  --border-radius: 6px;
+  --background-focused: #0056b3;
+  --color: #fff; 
+  font-weight: bold;
+}
+
+ion-button[color="primary"] {
+  --background: #007bff;
+}
+
+ion-button[color="secondary"] {
+  --background: #28a745; 
+}
+
+.text-container {
+  margin-top: 15px;
+  font-size: 14px;
+}
+
+.text-container p {
+  margin: 0 0 10px;
+}
+
+.text-container ion-button {
+  --color: #007bff;
+  --background: transparent;
+  --border-radius: 20px;
+  border: 1px solid #007bff;
+}
+  

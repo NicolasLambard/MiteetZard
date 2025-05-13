@@ -1,0 +1,92 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-button (click)="retourAdmin()">
+        <ion-icon name="arrow-back-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>
+      <ion-icon name="list-outline"></ion-icon> Gestion des Catégories
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="categories-container">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>{{ editMode ? 'Modifier une catégorie' : 'Ajouter une nouvelle catégorie' }}</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <form (ngSubmit)="editMode ? modifierCategorie() : ajouterCategorie()">
+          <ion-item>
+            <ion-label position="floating">Nom de la catégorie *</ion-label>
+            <ion-input *ngIf="!editMode" type="text" [(ngModel)]="nouvelleCategorie.nom_categorie" name="nom_categorie_new" required></ion-input>
+            <ion-input *ngIf="editMode" type="text" [(ngModel)]="categorieEnEdition.nom_categorie" name="nom_categorie_edit" required></ion-input>
+          </ion-item>
+          
+          <ion-item>
+            <ion-label position="floating">Description</ion-label>
+            <ion-textarea *ngIf="!editMode" [(ngModel)]="nouvelleCategorie.description" name="description_new"></ion-textarea>
+            <ion-textarea *ngIf="editMode" [(ngModel)]="categorieEnEdition.description" name="description_edit"></ion-textarea>
+          </ion-item>
+          
+          <div class="form-buttons">
+            <ion-button type="submit" expand="block" color="primary">
+              {{ editMode ? 'Mettre à jour' : 'Ajouter' }}
+            </ion-button>
+            
+            <ion-button *ngIf="editMode" type="button" expand="block" color="medium" (click)="annulerEdition()">
+              Annuler
+            </ion-button>
+          </div>
+        </form>
+      </ion-card-content>
+    </ion-card>
+    
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Liste des catégories</ion-card-title>
+        <ion-card-subtitle>
+          {{ categories.length }} catégorie(s) disponible(s)
+        </ion-card-subtitle>
+      </ion-card-header>
+      
+      <ion-card-content>
+        <ion-spinner *ngIf="isLoading" name="crescent" class="spinner-center"></ion-spinner>
+        
+        <ion-list *ngIf="!isLoading">
+          <ion-item-sliding *ngFor="let categorie of categories">
+            <ion-item>
+              <ion-icon name="folder-outline" slot="start" color="primary"></ion-icon>
+              <ion-label>
+                <h2>{{ categorie.nom_categorie }}</h2>
+                <p *ngIf="categorie.description">{{ categorie.description }}</p>
+                <p *ngIf="!categorie.description" class="text-muted">Pas de description</p>
+              </ion-label>
+              
+              <ion-buttons slot="end">
+                <ion-button (click)="editerCategorie(categorie)" color="primary">
+                  <ion-icon name="create-outline" slot="icon-only"></ion-icon>
+                </ion-button>
+              </ion-buttons>
+            </ion-item>
+            
+            <ion-item-options side="end">
+              <ion-item-option (click)="supprimerCategorie(categorie)" color="danger">
+                <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+                Supprimer
+              </ion-item-option>
+            </ion-item-options>
+          </ion-item-sliding>
+          
+          <ion-item *ngIf="categories.length === 0">
+            <ion-label class="ion-text-center">
+              Aucune catégorie disponible. Ajoutez-en une !
+            </ion-label>
+          </ion-item>
+        </ion-list>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content> 

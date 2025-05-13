@@ -1,0 +1,132 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title class="ion-text-center">Mite & Zard</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="page-background"></div>
+
+  <div class="register-container">
+    <div class="logo-container">
+      <img src="assets/logo.jpg" alt="Mite & Zard Logo" class="logo" />
+      <h2>Inscription</h2>
+    </div>
+
+    <form (ngSubmit)="inscrireUtilisateur()" #registerForm="ngForm" class="form-container">
+      <ion-item>
+        <ion-label position="floating">Nom</ion-label>
+        <ion-input
+          type="text"
+          [(ngModel)]="utilisateur.nom"
+          name="nom"
+          required
+        ></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating">Prénom</ion-label>
+        <ion-input
+          type="text"
+          [(ngModel)]="utilisateur.prenom"
+          name="prenom"
+          required
+        ></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating">Email</ion-label>
+        <ion-input
+          type="email"
+          [(ngModel)]="utilisateur.email"
+          name="email"
+          required
+        ></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating">Mot de passe</ion-label>
+        <ion-input
+          type="password"
+          [(ngModel)]="utilisateur.motDePasse"
+          name="motDePasse"
+          required
+        ></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating">Numéro de téléphone</ion-label>
+        <ion-input
+          type="tel"
+          [(ngModel)]="utilisateur.telephone"
+          name="telephone"
+          required
+        ></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating">Adresse</ion-label>
+        <ion-input
+          type="text"
+          [(ngModel)]="utilisateur.adresse"
+          name="adresse"
+          required
+          (ionChange)="rechercheAdresse($event)"
+        ></ion-input>
+        <ion-button slot="end" fill="clear" (click)="detecterAdresse()">
+          <ion-icon name="search-outline"></ion-icon>
+        </ion-button>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating">Adresse complémentaire (facultatif)</ion-label>
+        <ion-input
+          type="text"
+          [(ngModel)]="utilisateur.adresseComplementaire"
+          name="adresseComplementaire"
+        ></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating">Ville</ion-label>
+        <ion-input
+          type="text"
+          [(ngModel)]="utilisateur.ville"
+          name="ville"
+          required
+        ></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating">Code Postal</ion-label>
+        <ion-input
+          type="text"
+          [(ngModel)]="utilisateur.codePostal"
+          name="codePostal"
+          required
+        ></ion-input>
+      </ion-item>
+
+      <div class="button-container">
+        <ion-button expand="block" color="secondary" (click)="localiserAppareil()">
+          <ion-icon name="location-outline" slot="start"></ion-icon>
+          Localiser mon appareil
+        </ion-button>
+        <ion-button
+          type="submit"
+          expand="block"
+          color="primary"
+          [disabled]="!registerForm.valid"
+        >
+          <ion-icon name="person-add-outline" slot="start"></ion-icon>
+          S'inscrire
+        </ion-button>
+      </div>
+      
+      <div class="text-container">
+        <p>Déjà un compte ?</p>
+        <ion-button fill="clear" [routerLink]="['/login']">Se connecter</ion-button>
+      </div>
+    </form>
+  </div>
+</ion-content>

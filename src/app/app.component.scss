@@ -1,0 +1,25 @@
+ion-fab {
+  margin-bottom: 20px;
+  margin-right: 20px;
+}
+
+ion-fab-button {
+  --box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+ion-badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  border-radius: 50%;
+  font-size: 12px;
+  --padding-start: 5px;
+  --padding-end: 5px;
+  --padding-top: 3px;
+  --padding-bottom: 3px;
+  min-width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

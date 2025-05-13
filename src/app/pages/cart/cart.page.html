@@ -1,0 +1,108 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/menu"></ion-back-button>
+    </ion-buttons>
+    <ion-title>
+      <ion-icon name="cart-outline"></ion-icon> Mon Panier
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="ion-padding">
+    <ion-card *ngIf="cartItems.length === 0">
+      <ion-card-header>
+        <ion-card-title>Votre panier est vide</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <p>Ajoutez des produits ou des menus depuis notre carte</p>
+        <ion-button expand="block" (click)="continueShopping()">
+          <ion-icon name="restaurant-outline" slot="start"></ion-icon>
+          Voir la carte
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-list *ngIf="cartItems.length > 0">
+      <ion-item-sliding *ngFor="let item of cartItems; let i = index">
+        <ion-item>
+          <ion-thumbnail slot="start" class="cart-item-image">
+            <ng-container *ngIf="item.image; else noImage">
+              <img [src]="item.image" alt="{{ item.name }}">
+            </ng-container>
+            <ng-template #noImage>
+              <div class="no-image-placeholder">
+                <ion-icon [name]="item.type === 'menu' ? 'restaurant-outline' : 'fast-food-outline'" size="large"></ion-icon>
+              </div>
+            </ng-template>
+          </ion-thumbnail>
+          
+          <ion-label>
+            <h2>{{ item.name }}</h2>
+            <p *ngIf="item.type === 'menu'">
+              <ion-badge color="tertiary">Menu</ion-badge>
+            </p>
+            <p>{{ item.price | currency:'EUR' }}</p>
+          </ion-label>
+          
+          <div class="quantity-control">
+            <ion-button fill="clear" size="small" (click)="decreaseQuantity(i)">
+              <ion-icon name="remove-circle-outline"></ion-icon>
+            </ion-button>
+            <span class="quantity">{{ item.quantity }}</span>
+            <ion-button fill="clear" size="small" (click)="increaseQuantity(i)">
+              <ion-icon name="add-circle-outline"></ion-icon>
+            </ion-button>
+          </div>
+          
+          <div slot="end" class="item-total">
+            {{ item.price * item.quantity | currency:'EUR' }}
+          </div>
+        </ion-item>
+        
+        <ion-item-options side="end">
+          <ion-item-option color="danger" (click)="confirmRemoveItem(i)">
+            <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+          </ion-item-option>
+        </ion-item-options>
+      </ion-item-sliding>
+    </ion-list>
+
+    <ion-card *ngIf="cartItems.length > 0">
+      <ion-card-header>
+        <ion-card-title>Résumé de la commande</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-item lines="none">
+          <ion-label>Sous-total</ion-label>
+          <ion-text slot="end">{{ total | currency:'EUR' }}</ion-text>
+        </ion-item>
+        
+        <ion-item lines="none" class="delivery-fee">
+          <ion-label>Frais de livraison</ion-label>
+          <ion-text slot="end">{{ deliveryFee | currency:'EUR' }}</ion-text>
+        </ion-item>
+        
+        <ion-item lines="none" class="total-row">
+          <ion-label>Total</ion-label>
+          <ion-text slot="end" color="primary" class="total-price">{{ getTotalWithDelivery() | currency:'EUR' }}</ion-text>
+        </ion-item>
+        
+        <div class="button-container">
+          <ion-button expand="block" color="danger" fill="outline" (click)="clearCart()">
+            <ion-icon name="trash-outline" slot="start"></ion-icon>
+            Vider le panier
+          </ion-button>
+          
+          <ion-button expand="block" color="success" (click)="checkout()">
+            <ion-icon name="checkmark-circle-outline" slot="start"></ion-icon>
+            Passer commande
+          </ion-button>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>
+
+<ion-loading [isOpen]="loading" message="Traitement de votre commande..."></ion-loading> 
